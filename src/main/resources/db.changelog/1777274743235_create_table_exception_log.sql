@@ -1,0 +1,23 @@
+-- LIQUIBASE FORMATTED SQL
+-- CHANGESSET Rohit:1
+
+CREATE TABLE exception_log (
+
+    ID RAW(16) DEFAULT SYS_GUID() PRIMARY KEY,
+
+    type VARCHAR2(255 BYTE),
+
+    stacktrace CLOB,
+
+    path VARCHAR2(500 BYTE),
+
+    MID VARCHAR2(20 BYTE) NOT NULL,
+
+    correlation_id VARCHAR2(100 BYTE),
+
+    remark VARCHAR2(1000 BYTE),
+
+    CREATED_BY VARCHAR2(100 BYTE),
+
+    CREATED_AT NUMBER
+);
