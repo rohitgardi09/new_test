@@ -1,3 +1,55 @@
+FilterBasedLdapUserSearch ldapUserSearch = new FilterBasedLdapUserSearch(userSearchBase, userSearchFilter, contextSource);
+ldapUserSearch.setSearchSubtree(true);
+DirContextOperations userDetails;
+try {
+    userDetails = ldapUserSearch.searchForUser(loginRequest.getUserId());
+
+    javax.naming.directory.Attributes allAttrs = userDetails.getAttributes();
+    javax.naming.NamingEnumeration<String> attrIds = allAttrs.getIDs();
+    StringBuilder allFields = new StringBuilder();
+    while (attrIds.hasMore()) {
+        String attrId = attrIds.next();
+        allFields.append(attrId).append("=").append(userDetails.getStringAttribute(attrId)).append(System.lineSeparator());
+    }
+
+    String name = userDetails.getStringAttribute("cn");
+    String email = userDetails.getStringAttribute("mail");
+    String mobile1 = userDetails.getStringAttribute("mobile");
+    String mobile2 = userDetails.getStringAttribute("telephoneNumber");
+    String mobile3 = userDetails.getStringAttribute("homePhone");
+    String mobile4 = userDetails.getStringAttribute("otherMobile");
+
+    result.append("STAGE 3 RESULT: User found. Resolved DN: ").append(userDetails.getNameInNamespace()).append(System.lineSeparator());
+    result.append("ADID entered: ").append(loginRequest.getUserId()).append(System.lineSeparator());
+    result.append("Name: ").append(name).append(System.lineSeparator());
+    result.append("Email: ").append(email).append(System.lineSeparator());
+    result.append("mobile: ").append(mobile1).append(System.lineSeparator());
+    result.append("telephoneNumber: ").append(mobile2).append(System.lineSeparator());
+    result.append("homePhone: ").append(mobile3).append(System.lineSeparator());
+    result.append("otherMobile: ").append(mobile4).append(System.lineSeparator());
+    result.append("ALL ATTRIBUTES:").append(System.lineSeparator());
+    result.append(allFields);
+
+    log.info(result.toString());
+} catch (UsernameNotFoundException ex) {
+    msg = "STAGE 3 FAILED - CONFIG ISSUE: user '" + loginRequest.getUserId() + "' not found. Check user-search-base/user-search-filter. Msg: " + ex.getMessage();
+    log.error(msg, ex);
+    return result.append(msg).toString();
+} catch (Exception ex) {
+    msg = "STAGE 3 FAILED - UNKNOWN: Type: " + ex.getClass().getName() + ", Msg: " + ex.getMessage();
+    log.error(msg, ex);
+    return result.append(msg).toString();
+}
+
+
+
+
+
+
+
+
+
+
 
 // STAGE 3: Search for the user via configured search-base/search-filter
 FilterBasedLdapUserSearch ldapUserSearch = new FilterBasedLdapUserSearch(userSearchBase, userSearchFilter, contextSource);
