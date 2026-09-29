@@ -1,3 +1,38 @@
+
+// STAGE 3: Search for the user via configured search-base/search-filter
+FilterBasedLdapUserSearch ldapUserSearch = new FilterBasedLdapUserSearch(userSearchBase, userSearchFilter, contextSource);
+ldapUserSearch.setSearchSubtree(true);
+DirContextOperations userDetails;
+try {
+    userDetails = ldapUserSearch.searchForUser(loginRequest.getUserId());
+
+    String name = userDetails.getStringAttribute("cn");
+    String email = userDetails.getStringAttribute("mail");
+    String mobile = userDetails.getStringAttribute("mobile");
+
+    msg = "STAGE 3 RESULT: User found. Resolved DN: " + userDetails.getNameInNamespace()
+            + " | Name: " + name
+            + " | Email: " + email
+            + " | Mobile: " + mobile;
+    log.info(msg);
+    result.append(msg).append("\n");
+} catch (UsernameNotFoundException ex) {
+    msg = "STAGE 3 FAILED - CONFIG ISSUE: user '" + loginRequest.getUserId() + "' not found. Check user-search-base/user-search-filter. Msg: " + ex.getMessage();
+    log.error(msg, ex);
+    return result.append(msg).toString();
+} catch (Exception ex) {
+    msg = "STAGE 3 FAILED - UNKNOWN: Type: " + ex.getClass().getName() + ", Msg: " + ex.getMessage();
+    log.error(msg, ex);
+    return result.append(msg).toString();
+}
+
+
+
+
+
+
+
+
 sagar.rathod.cedge@sbi.co.in; bhoopendra.rajput.cedge@sbi.co.in; ranu.jain.cedge@sbi.co.in; namdev.gadve.cedge@sbi.co.in; vishnu.ghelot@sbi.co.in; prasad.gaikwad@sbi.co.in; faizan.pinjari.cedge@sbi.co.in; sourabh.dutta@sbi.co.in; vishal.bansal@sbi.co.in; aniket.taksande@sbi.co.in; vikram.deshpande.cedge@sbi.co.in; dipesh.bhanushali.cedge@sbi.co.in; neeraj.durgapal.cedge@sbi.co.in; karan.thakkar.cedge@sbi.co.in; sunadmin2.sbiepay@sbi.co.in; tech.sbiepay@sbi.co.in; noc.sbiepay@sbi.co.in; product.sbiepay@sbi.co.in; team.epay@sbi.co.in; devops.sbiepay@sbi.co.in
 
 
